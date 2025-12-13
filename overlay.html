@@ -92,19 +92,26 @@
         </div>
     </div>
 
-    <script>
-        // Storage API
-        const storage = {
-            async get(key, shared = false) {
-                const response = await fetch('https://storage.googleapis.com/clai-extension-artifacts-prod/artifact-storage/get', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ key, shared })
-                });
-                if (!response.ok) throw new Error('Key not found');
-                return await response.json();
-            }
+    <script type="module">
+        // Firebase Import
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Firebase Konfiguration - ERSETZE DIES MIT DEINER EIGENEN CONFIG
+        const firebaseConfig = {
+            apiKey: "DEIN-API-KEY",
+            authDomain: "DEIN-PROJECT.firebaseapp.com",
+            databaseURL: "https://DEIN-PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "DEIN-PROJECT",
+            storageBucket: "DEIN-PROJECT.appspot.com",
+            messagingSenderId: "DEINE-SENDER-ID",
+            appId: "DEINE-APP-ID"
         };
+
+        // Firebase initialisieren
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const gameRef = ref(database, 'badminton-game');
 
         // Elemente
         const elements = {
@@ -116,29 +123,19 @@
             team2Sets: document.getElementById('team2-sets')
         };
 
-        // Daten laden und anzeigen
-        async function loadData() {
-            try {
-                const result = await storage.get('badminton-game', true);
-                const data = JSON.parse(result.value);
+        // Auf Änderungen in der Datenbank lauschen
+        onValue(gameRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                elements.team1Name.textContent = data.names?.team1 || 'Team 1';
+                elements.team1Score.textContent = data.scores?.team1 || 0;
+                elements.team1Sets.textContent = data.sets?.team1 || 0;
                 
-                elements.team1Name.textContent = data.names.team1;
-                elements.team1Score.textContent = data.scores.team1;
-                elements.team1Sets.textContent = data.sets.team1;
-                
-                elements.team2Name.textContent = data.names.team2;
-                elements.team2Score.textContent = data.scores.team2;
-                elements.team2Sets.textContent = data.sets.team2;
-            } catch (error) {
-                console.log('Warte auf Daten...');
+                elements.team2Name.textContent = data.names?.team2 || 'Team 2';
+                elements.team2Score.textContent = data.scores?.team2 || 0;
+                elements.team2Sets.textContent = data.sets?.team2 || 0;
             }
-        }
-
-        // Initial laden
-        loadData();
-
-        // Alle 500ms aktualisieren
-        setInterval(loadData, 500);
+        });
     </script>
 </body>
 </html>
