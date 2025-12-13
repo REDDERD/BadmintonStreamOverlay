@@ -1,0 +1,130 @@
+import React, { useState, useEffect } from 'react';
+
+function BadmintonOverlay() {
+  const [scores, setScores] = useState({ team1: 0, team2: 0 });
+  const [names, setNames] = useState({ team1: 'Team 1', team2: 'Team 2' });
+  const [sets, setSets] = useState({ team1: 0, team2: 0 });
+
+  // Daten vom Storage laden
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const result = await window.storage.get('badminton-game', true);
+        if (result) {
+          const data = JSON.parse(result.value);
+          setScores(data.scores);
+          setNames(data.names);
+          setSets(data.sets);
+        }
+      } catch (error) {
+        console.log('Initialer Ladevorgang, noch keine Daten vorhanden');
+      }
+    };
+    
+    loadData();
+    
+    // Alle 500ms aktualisieren
+    const interval = setInterval(loadData, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={{
+      width: '100vw',
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      paddingTop: '40px',
+      fontFamily: 'Arial, sans-serif',
+      background: 'transparent'
+    }}>
+      <div style={{
+        background: 'rgba(0, 0, 0, 0.75)',
+        borderRadius: '15px',
+        padding: '25px 40px',
+        display: 'flex',
+        gap: '40px',
+        alignItems: 'center',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+        border: '2px solid rgba(255, 255, 255, 0.1)'
+      }}>
+        {/* Team 1 */}
+        <div style={{
+          textAlign: 'center',
+          minWidth: '180px'
+        }}>
+          <div style={{
+            color: '#fff',
+            fontSize: '24px',
+            fontWeight: 'bold',
+            marginBottom: '10px',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+          }}>
+            {names.team1}
+          </div>
+          <div style={{
+            color: '#4ade80',
+            fontSize: '72px',
+            fontWeight: 'bold',
+            lineHeight: '1',
+            textShadow: '3px 3px 6px rgba(0,0,0,0.7)'
+          }}>
+            {scores.team1}
+          </div>
+          <div style={{
+            color: '#9ca3af',
+            fontSize: '18px',
+            marginTop: '8px'
+          }}>
+            Sätze: {sets.team1}
+          </div>
+        </div>
+
+        {/* Trenner */}
+        <div style={{
+          color: '#6b7280',
+          fontSize: '48px',
+          fontWeight: 'bold',
+          padding: '0 10px'
+        }}>
+          :
+        </div>
+
+        {/* Team 2 */}
+        <div style={{
+          textAlign: 'center',
+          minWidth: '180px'
+        }}>
+          <div style={{
+            color: '#fff',
+            fontSize: '24px',
+            fontWeight: 'bold',
+            marginBottom: '10px',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+          }}>
+            {names.team2}
+          </div>
+          <div style={{
+            color: '#f87171',
+            fontSize: '72px',
+            fontWeight: 'bold',
+            lineHeight: '1',
+            textShadow: '3px 3px 6px rgba(0,0,0,0.7)'
+          }}>
+            {scores.team2}
+          </div>
+          <div style={{
+            color: '#9ca3af',
+            fontSize: '18px',
+            marginTop: '8px'
+          }}>
+            Sätze: {sets.team2}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default BadmintonOverlay;
