@@ -1,0 +1,403 @@
+import React, { useState, useEffect } from 'react';
+
+function BadmintonController() {
+  const [scores, setScores] = useState({ team1: 0, team2: 0 });
+  const [names, setNames] = useState({ team1: 'Team 1', team2: 'Team 2' });
+  const [sets, setSets] = useState({ team1: 0, team2: 0 });
+  const [editMode, setEditMode] = useState(false);
+
+  // Daten laden
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const result = await window.storage.get('badminton-game', true);
+        if (result) {
+          const data = JSON.parse(result.value);
+          setScores(data.scores);
+          setNames(data.names);
+          setSets(data.sets);
+        }
+      } catch (error) {
+        console.log('Initialisiere neue Spieldaten');
+      }
+    };
+    
+    loadData();
+  }, []);
+
+  // Daten speichern
+  const saveData = async (newScores, newNames, newSets) => {
+    try {
+      await window.storage.set('badminton-game', JSON.stringify({
+        scores: newScores,
+        names: newNames,
+        sets: newSets
+      }), true);
+    } catch (error) {
+      console.error('Fehler beim Speichern:', error);
+    }
+  };
+
+  const updateScore = (team, delta) => {
+    const newScores = { ...scores, [team]: Math.max(0, scores[team] + delta) };
+    setScores(newScores);
+    saveData(newScores, names, sets);
+  };
+
+  const updateSet = (team, delta) => {
+    const newSets = { ...sets, [team]: Math.max(0, sets[team] + delta) };
+    setSets(newSets);
+    saveData(scores, names, newSets);
+  };
+
+  const updateName = (team, newName) => {
+    const newNames = { ...names, [team]: newName };
+    setNames(newNames);
+    saveData(scores, newNames, sets);
+  };
+
+  const resetGame = () => {
+    if (confirm('Spiel wirklich zurücksetzen?')) {
+      const newScores = { team1: 0, team2: 0 };
+      setScores(newScores);
+      saveData(newScores, names, sets);
+    }
+  };
+
+  const resetAll = () => {
+    if (confirm('Alles (inkl. Sätze) zurücksetzen?')) {
+      const newScores = { team1: 0, team2: 0 };
+      const newSets = { team1: 0, team2: 0 };
+      setScores(newScores);
+      setSets(newSets);
+      saveData(newScores, names, newSets);
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      padding: '20px',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <div style={{
+        maxWidth: '600px',
+        margin: '0 auto',
+        background: 'white',
+        borderRadius: '20px',
+        padding: '30px',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+      }}>
+        <h1 style={{
+          textAlign: 'center',
+          color: '#1f2937',
+          marginBottom: '30px',
+          fontSize: '32px'
+        }}>
+          🏸 Badminton Scoreboard
+        </h1>
+
+        {/* Team 1 */}
+        <div style={{
+          background: '#f0fdf4',
+          borderRadius: '15px',
+          padding: '25px',
+          marginBottom: '20px',
+          border: '3px solid #4ade80'
+        }}>
+          {editMode ? (
+            <input
+              type="text"
+              value={names.team1}
+              onChange={(e) => updateName('team1', e.target.value)}
+              style={{
+                width: '100%',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                marginBottom: '15px',
+                padding: '10px',
+                border: '2px solid #4ade80',
+                borderRadius: '8px'
+              }}
+            />
+          ) : (
+            <h2 style={{ fontSize: '24px', marginBottom: '15px', color: '#166534' }}>
+              {names.team1}
+            </h2>
+          )}
+          
+          <div style={{
+            fontSize: '64px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: '20px',
+            color: '#16a34a'
+          }}>
+            {scores.team1}
+          </div>
+          
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+            <button
+              onClick={() => updateScore('team1', 1)}
+              style={{
+                flex: 1,
+                padding: '20px',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                background: '#4ade80',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                cursor: 'pointer'
+              }}
+            >
+              +1
+            </button>
+            <button
+              onClick={() => updateScore('team1', -1)}
+              style={{
+                flex: 1,
+                padding: '20px',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                background: '#dc2626',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                cursor: 'pointer'
+              }}
+            >
+              -1
+            </button>
+          </div>
+          
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            padding: '10px',
+            background: 'white',
+            borderRadius: '8px'
+          }}>
+            <span style={{ fontSize: '18px', fontWeight: 'bold' }}>Sätze: {sets.team1}</span>
+            <div style={{ display: 'flex', gap: '5px' }}>
+              <button
+                onClick={() => updateSet('team1', 1)}
+                style={{
+                  padding: '8px 15px',
+                  fontSize: '16px',
+                  background: '#22c55e',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                +
+              </button>
+              <button
+                onClick={() => updateSet('team1', -1)}
+                style={{
+                  padding: '8px 15px',
+                  fontSize: '16px',
+                  background: '#ef4444',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                -
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Team 2 */}
+        <div style={{
+          background: '#fef2f2',
+          borderRadius: '15px',
+          padding: '25px',
+          marginBottom: '20px',
+          border: '3px solid #f87171'
+        }}>
+          {editMode ? (
+            <input
+              type="text"
+              value={names.team2}
+              onChange={(e) => updateName('team2', e.target.value)}
+              style={{
+                width: '100%',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                marginBottom: '15px',
+                padding: '10px',
+                border: '2px solid #f87171',
+                borderRadius: '8px'
+              }}
+            />
+          ) : (
+            <h2 style={{ fontSize: '24px', marginBottom: '15px', color: '#991b1b' }}>
+              {names.team2}
+            </h2>
+          )}
+          
+          <div style={{
+            fontSize: '64px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: '20px',
+            color: '#dc2626'
+          }}>
+            {scores.team2}
+          </div>
+          
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+            <button
+              onClick={() => updateScore('team2', 1)}
+              style={{
+                flex: 1,
+                padding: '20px',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                background: '#f87171',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                cursor: 'pointer'
+              }}
+            >
+              +1
+            </button>
+            <button
+              onClick={() => updateScore('team2', -1)}
+              style={{
+                flex: 1,
+                padding: '20px',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                background: '#dc2626',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                cursor: 'pointer'
+              }}
+            >
+              -1
+            </button>
+          </div>
+          
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            padding: '10px',
+            background: 'white',
+            borderRadius: '8px'
+          }}>
+            <span style={{ fontSize: '18px', fontWeight: 'bold' }}>Sätze: {sets.team2}</span>
+            <div style={{ display: 'flex', gap: '5px' }}>
+              <button
+                onClick={() => updateSet('team2', 1)}
+                style={{
+                  padding: '8px 15px',
+                  fontSize: '16px',
+                  background: '#f87171',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                +
+              </button>
+              <button
+                onClick={() => updateSet('team2', -1)}
+                style={{
+                  padding: '8px 15px',
+                  fontSize: '16px',
+                  background: '#dc2626',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                -
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Steuerungsbuttons */}
+        <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+          <button
+            onClick={() => setEditMode(!editMode)}
+            style={{
+              flex: 1,
+              padding: '15px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              background: editMode ? '#3b82f6' : '#6b7280',
+              color: 'white',
+              border: 'none',
+              borderRadius: '10px',
+              cursor: 'pointer'
+            }}
+          >
+            {editMode ? '✓ Namen fertig' : '✏️ Namen ändern'}
+          </button>
+          <button
+            onClick={resetGame}
+            style={{
+              flex: 1,
+              padding: '15px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              background: '#f59e0b',
+              color: 'white',
+              border: 'none',
+              borderRadius: '10px',
+              cursor: 'pointer'
+            }}
+          >
+            🔄 Punkte zurücksetzen
+          </button>
+        </div>
+        
+        <button
+          onClick={resetAll}
+          style={{
+            width: '100%',
+            padding: '15px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            background: '#dc2626',
+            color: 'white',
+            border: 'none',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            marginTop: '10px'
+          }}
+        >
+          🗑️ Alles zurücksetzen
+        </button>
+
+        <div style={{
+          marginTop: '30px',
+          padding: '20px',
+          background: '#f3f4f6',
+          borderRadius: '10px',
+          fontSize: '14px',
+          color: '#4b5563'
+        }}>
+          <strong>ℹ️ Hinweis:</strong> Die Daten werden automatisch synchronisiert. 
+          Öffne das Overlay in einem anderen Browser-Tab oder Gerät, um die Anzeige zu sehen.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default BadmintonController;
