@@ -61,17 +61,37 @@
             color: #f87171;
         }
         
-        .sets {
-            color: #9ca3af;
-            font-size: 18px;
-            margin-top: 8px;
+        .middle-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
         }
         
         .divider {
             color: #6b7280;
             font-size: 48px;
             font-weight: bold;
-            padding: 0 10px;
+        }
+        
+        .sets-display {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            padding: 8px 20px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        
+        .sets-label {
+            color: #9ca3af;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -80,38 +100,46 @@
         <div class="team team1">
             <div class="team-name" id="team1-name">Team 1</div>
             <div class="score" id="team1-score">0</div>
-            <div class="sets">Sätze: <span id="team1-sets">0</span></div>
         </div>
         
-        <div class="divider">:</div>
+        <div class="middle-section">
+            <div class="divider">:</div>
+            <div class="sets-display">
+                <span id="team1-sets">0</span> : <span id="team2-sets">0</span>
+            </div>
+            <div class="sets-label">Sätze</div>
+        </div>
         
         <div class="team team2">
             <div class="team-name" id="team2-name">Team 2</div>
             <div class="score" id="team2-score">0</div>
-            <div class="sets">Sätze: <span id="team2-sets">0</span></div>
         </div>
     </div>
 
     <script type="module">
         // Firebase Import
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getDatabase, ref, onValue, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
-        // Firebase Konfiguration
+        // Firebase Konfiguration - ERSETZE DIES MIT DEINER EIGENEN CONFIG
         const firebaseConfig = {
-  apiKey: "AIzaSyBZnFI0Vt5J2CeFF8C6YNWNHK7pc-nxbVQ",
-  authDomain: "badmintonstreamoverlay.firebaseapp.com",
-  databaseURL: "https://badmintonstreamoverlay-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "badmintonstreamoverlay",
-  storageBucket: "badmintonstreamoverlay.firebasestorage.app",
-  messagingSenderId: "865072634738",
-  appId: "1:865072634738:web:b1683b7b8d310f2221dbeb"
-};
+            apiKey: "DEIN-API-KEY",
+            authDomain: "DEIN-PROJECT.firebaseapp.com",
+            databaseURL: "https://DEIN-PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "DEIN-PROJECT",
+            storageBucket: "DEIN-PROJECT.appspot.com",
+            messagingSenderId: "DEINE-SENDER-ID",
+            appId: "DEINE-APP-ID"
+        };
 
         // Firebase initialisieren
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         const gameRef = ref(database, 'badminton-game');
+
+        // Debug-Logging
+        console.log('Firebase initialisiert');
+        console.log('Overlay lädt Daten...');
 
         // Elemente
         const elements = {
@@ -123,19 +151,37 @@
             team2Sets: document.getElementById('team2-sets')
         };
 
+        // Einmalig laden beim Start
+        get(gameRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                console.log('Initial geladen:', data);
+                updateDisplay(data);
+            }
+        }).catch((error) => {
+            console.error('Fehler beim initialen Laden:', error);
+        });
+
         // Auf Änderungen in der Datenbank lauschen
         onValue(gameRef, (snapshot) => {
             const data = snapshot.val();
+            console.log('Update empfangen:', data);
             if (data) {
-                elements.team1Name.textContent = data.names?.team1 || 'Team 1';
-                elements.team1Score.textContent = data.scores?.team1 || 0;
-                elements.team1Sets.textContent = data.sets?.team1 || 0;
-                
-                elements.team2Name.textContent = data.names?.team2 || 'Team 2';
-                elements.team2Score.textContent = data.scores?.team2 || 0;
-                elements.team2Sets.textContent = data.sets?.team2 || 0;
+                updateDisplay(data);
             }
+        }, (error) => {
+            console.error('Firebase Fehler:', error);
         });
+
+        function updateDisplay(data) {
+            elements.team1Name.textContent = data.names?.team1 || 'Team 1';
+            elements.team1Score.textContent = data.scores?.team1 || 0;
+            elements.team1Sets.textContent = data.sets?.team1 || 0;
+            
+            elements.team2Name.textContent = data.names?.team2 || 'Team 2';
+            elements.team2Score.textContent = data.scores?.team2 || 0;
+            elements.team2Sets.textContent = data.sets?.team2 || 0;
+        }
     </script>
 </body>
 </html>
