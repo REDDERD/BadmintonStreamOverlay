@@ -52,13 +52,23 @@ body {
     line-height: 1;
 }
 
-/* Farben */
+/* Neutral */
 .team1 {
-    background: #14532d; /* grün */
+    background: #020617;
 }
 
 .team2 {
-    background: #7f1d1d; /* rot */
+    background: #020617;
+}
+
+/* Führend */
+.leading {
+    background: #14532d !important; /* grün */
+}
+
+/* Zurückliegend */
+.trailing {
+    background: #7f1d1d !important; /* rot */
 }
 
 /* Mitte */
@@ -152,14 +162,37 @@ onValue(gameRef, snapshot => {
 });
 
 function updateDisplay(data) {
+    const t1Score = data.scores?.team1 || 0;
+    const t2Score = data.scores?.team2 || 0;
+
+    const t1Sets = data.sets?.team1 || 0;
+    const t2Sets = data.sets?.team2 || 0;
+
     elements.team1Name.textContent = data.names?.team1 || 'Team 1';
-    elements.team1Score.textContent = data.scores?.team1 || 0;
-    elements.team1Sets.textContent = data.sets?.team1 || 0;
+    elements.team1Score.textContent = t1Score;
+    elements.team1Sets.textContent = t1Sets;
 
     elements.team2Name.textContent = data.names?.team2 || 'Team 2';
-    elements.team2Score.textContent = data.scores?.team2 || 0;
-    elements.team2Sets.textContent = data.sets?.team2 || 0;
+    elements.team2Score.textContent = t2Score;
+    elements.team2Sets.textContent = t2Sets;
+
+    /* Klassen zurücksetzen */
+    const team1El = document.querySelector('.team1');
+    const team2El = document.querySelector('.team2');
+
+    team1El.classList.remove('leading', 'trailing');
+    team2El.classList.remove('leading', 'trailing');
+
+    /* Wer führt? */
+    if (t1Score > t2Score) {
+        team1El.classList.add('leading');
+        team2El.classList.add('trailing');
+    } else if (t2Score > t1Score) {
+        team2El.classList.add('leading');
+        team1El.classList.add('trailing');
+    }
 }
+
 </script>
 
 </body>
