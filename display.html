@@ -1,182 +1,180 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Badminton Overlay</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            width: 1920px;
-            height: 1080px;
-            background: transparent;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 40px;
-        }
-        
-        .scoreboard {
-            background: rgba(0, 0, 0, 0.75);
-            display: flex;
-            align-items: center;
-        }
-        
-        .team {
-            text-align: center;
-            min-width: 180px;
-        }
-        
-        .team-name {
-            color: #fff;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        
-        .score {
-            font-size: 72px;
-            font-weight: bold;
-            line-height: 1;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
-        }
-        
-        .team1 .score {
-            color: #4ade80;
-        }
-        
-        .team2 .score {
-            color: #f87171;
-        }
-        
-        .middle-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .divider {
-            color: #6b7280;
-            font-size: 48px;
-            font-weight: bold;
-        }
-        
-        .sets-display {
-            background: rgba(255, 255, 255, 0.15);
-            border: 2px solid rgba(255, 255, 255, 0.25);
-            border-radius: 12px;
-            padding: 8px 20px;
-            color: #fff;
-            font-size: 20px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-        }
-        
-        .sets-label {
-            color: #9ca3af;
-            font-size: 14px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+<title>Badminton Overlay</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* Vollbild-Zentrierung */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Hauptcontainer */
+.scoreboard {
+    width: 90vw;
+    height: 35vh;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 2vw;
+    padding: 3vh 5vw;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 1vh 4vh rgba(0,0,0,0.5);
+    border: 0.2vw solid rgba(255,255,255,0.15);
+}
+
+/* Teams */
+.team {
+    width: 30%;
+    text-align: center;
+}
+
+.team-name {
+    font-size: 4vw;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 2vh;
+    text-shadow: 0.3vw 0.3vw 0.8vw rgba(0,0,0,0.7);
+}
+
+.score {
+    font-size: 12vw;
+    font-weight: bold;
+    line-height: 1;
+    text-shadow: 0.5vw 0.5vw 1vw rgba(0,0,0,0.8);
+}
+
+.team1 .score {
+    color: #4ade80;
+}
+
+.team2 .score {
+    color: #f87171;
+}
+
+/* Mitte */
+.middle-section {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2vh;
+}
+
+.divider {
+    font-size: 8vw;
+    font-weight: bold;
+    color: #9ca3af;
+}
+
+.sets-display {
+    background: rgba(255,255,255,0.15);
+    border: 0.2vw solid rgba(255,255,255,0.3);
+    border-radius: 1.5vw;
+    padding: 1vh 2vw;
+
+    font-size: 4vw;
+    font-weight: bold;
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+.sets-label {
+    font-size: 2vw;
+    letter-spacing: 0.3vw;
+    text-transform: uppercase;
+    color: #9ca3af;
+}
+</style>
 </head>
+
 <body>
-    <div class="scoreboard">
-        <div class="team team1">
-            <div class="team-name" id="team1-name">Team 1</div>
-            <div class="score" id="team1-score">0</div>
-        </div>
-        
-        <div class="middle-section">
-            <div class="divider">:</div>
-            <div class="sets-display">
-                <span id="team1-sets">0</span> : <span id="team2-sets">0</span>
-            </div>
-            <div class="sets-label">Sätze</div>
-        </div>
-        
-        <div class="team team2">
-            <div class="team-name" id="team2-name">Team 2</div>
-            <div class="score" id="team2-score">0</div>
-        </div>
+
+<div class="scoreboard">
+    <div class="team team1">
+        <div class="team-name" id="team1-name">Team 1</div>
+        <div class="score" id="team1-score">0</div>
     </div>
 
-    <script type="module">
-        // Firebase Import
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, onValue, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+    <div class="middle-section">
+        <div class="divider">:</div>
+        <div class="sets-display">
+            <span id="team1-sets">0</span> : <span id="team2-sets">0</span>
+        </div>
+        <div class="sets-label">Sätze</div>
+    </div>
 
-        // Firebase Konfiguration - ERSETZE DIES MIT DEINER EIGENEN CONFIG
-        const firebaseConfig = {
-            apiKey: "DEIN-API-KEY",
-            authDomain: "DEIN-PROJECT.firebaseapp.com",
-            databaseURL: "https://DEIN-PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "DEIN-PROJECT",
-            storageBucket: "DEIN-PROJECT.appspot.com",
-            messagingSenderId: "DEINE-SENDER-ID",
-            appId: "DEINE-APP-ID"
-        };
+    <div class="team team2">
+        <div class="team-name" id="team2-name">Team 2</div>
+        <div class="score" id="team2-score">0</div>
+    </div>
+</div>
 
-        // Firebase initialisieren
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-        const gameRef = ref(database, 'badminton-game');
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getDatabase, ref, onValue, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
-        // Debug-Logging
-        console.log('Firebase initialisiert');
-        console.log('Overlay lädt Daten...');
+const firebaseConfig = {
+  apiKey: "AIzaSyBZnFI0Vt5J2CeFF8C6YNWNHK7pc-nxbVQ",
+  authDomain: "badmintonstreamoverlay.firebaseapp.com",
+  databaseURL: "https://badmintonstreamoverlay-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "badmintonstreamoverlay",
+  storageBucket: "badmintonstreamoverlay.firebasestorage.app",
+  messagingSenderId: "865072634738",
+  appId: "1:865072634738:web:b1683b7b8d310f2221dbeb"
+};
 
-        // Elemente
-        const elements = {
-            team1Name: document.getElementById('team1-name'),
-            team1Score: document.getElementById('team1-score'),
-            team1Sets: document.getElementById('team1-sets'),
-            team2Name: document.getElementById('team2-name'),
-            team2Score: document.getElementById('team2-score'),
-            team2Sets: document.getElementById('team2-sets')
-        };
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const gameRef = ref(database, 'badminton-game');
 
-        // Einmalig laden beim Start
-        get(gameRef).then((snapshot) => {
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                console.log('Initial geladen:', data);
-                updateDisplay(data);
-            }
-        }).catch((error) => {
-            console.error('Fehler beim initialen Laden:', error);
-        });
+const elements = {
+    team1Name: document.getElementById('team1-name'),
+    team1Score: document.getElementById('team1-score'),
+    team1Sets: document.getElementById('team1-sets'),
+    team2Name: document.getElementById('team2-name'),
+    team2Score: document.getElementById('team2-score'),
+    team2Sets: document.getElementById('team2-sets')
+};
 
-        // Auf Änderungen in der Datenbank lauschen
-        onValue(gameRef, (snapshot) => {
-            const data = snapshot.val();
-            console.log('Update empfangen:', data);
-            if (data) {
-                updateDisplay(data);
-            }
-        }, (error) => {
-            console.error('Firebase Fehler:', error);
-        });
+get(gameRef).then(snapshot => {
+    if (snapshot.exists()) updateDisplay(snapshot.val());
+});
 
-        function updateDisplay(data) {
-            elements.team1Name.textContent = data.names?.team1 || 'Team 1';
-            elements.team1Score.textContent = data.scores?.team1 || 0;
-            elements.team1Sets.textContent = data.sets?.team1 || 0;
-            
-            elements.team2Name.textContent = data.names?.team2 || 'Team 2';
-            elements.team2Score.textContent = data.scores?.team2 || 0;
-            elements.team2Sets.textContent = data.sets?.team2 || 0;
-        }
-    </script>
+onValue(gameRef, snapshot => {
+    if (snapshot.exists()) updateDisplay(snapshot.val());
+});
+
+function updateDisplay(data) {
+    elements.team1Name.textContent = data.names?.team1 || 'Team 1';
+    elements.team1Score.textContent = data.scores?.team1 || 0;
+    elements.team1Sets.textContent = data.sets?.team1 || 0;
+
+    elements.team2Name.textContent = data.names?.team2 || 'Team 2';
+    elements.team2Score.textContent = data.scores?.team2 || 0;
+    elements.team2Sets.textContent = data.sets?.team2 || 0;
+}
+</script>
+
 </body>
 </html>
