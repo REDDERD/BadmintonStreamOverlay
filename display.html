@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
-<title>Badminton Overlay</title>
+<title>Badminton Scoreboard</title>
 
 <style>
 * {
@@ -15,95 +15,79 @@
 html, body {
     width: 100vw;
     height: 100vh;
-    background: transparent;
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
 
-/* Vollbild-Zentrierung */
+/* Vollbild-Hintergrund */
 body {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    background: #0f172a; /* Dunkelblau / neutral */
+    color: white;
 }
 
-/* Hauptcontainer */
+/* Layout */
 .scoreboard {
-    width: 90vw;
-    height: 35vh;
-    background: rgba(0, 0, 0, 0.75);
-    border-radius: 2vw;
-    padding: 3vh 5vw;
-
-    display: flex;
-    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 0.4fr 1fr;
     align-items: center;
-
-    box-shadow: 0 1vh 4vh rgba(0,0,0,0.5);
-    border: 0.2vw solid rgba(255,255,255,0.15);
 }
 
 /* Teams */
 .team {
-    width: 30%;
     text-align: center;
 }
 
 .team-name {
-    font-size: 4vw;
+    font-size: 6vw;
     font-weight: bold;
-    color: white;
-    margin-bottom: 2vh;
-    text-shadow: 0.3vw 0.3vw 0.8vw rgba(0,0,0,0.7);
+    margin-bottom: 4vh;
 }
 
 .score {
-    font-size: 12vw;
-    font-weight: bold;
+    font-size: 22vw;
+    font-weight: 900;
     line-height: 1;
-    text-shadow: 0.5vw 0.5vw 1vw rgba(0,0,0,0.8);
 }
 
-.team1 .score {
-    color: #4ade80;
+/* Farben */
+.team1 {
+    background: #14532d; /* grün */
 }
 
-.team2 .score {
-    color: #f87171;
+.team2 {
+    background: #7f1d1d; /* rot */
 }
 
 /* Mitte */
-.middle-section {
-    width: 20%;
+.middle {
+    background: #020617;
+    height: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 2vh;
 }
 
 .divider {
-    font-size: 8vw;
+    font-size: 10vw;
     font-weight: bold;
-    color: #9ca3af;
+    opacity: 0.7;
 }
 
-.sets-display {
-    background: rgba(255,255,255,0.15);
-    border: 0.2vw solid rgba(255,255,255,0.3);
-    border-radius: 1.5vw;
-    padding: 1vh 2vw;
-
-    font-size: 4vw;
+.sets {
+    margin-top: 4vh;
+    font-size: 6vw;
     font-weight: bold;
-    color: white;
-    backdrop-filter: blur(10px);
 }
 
 .sets-label {
-    font-size: 2vw;
-    letter-spacing: 0.3vw;
-    text-transform: uppercase;
-    color: #9ca3af;
+    margin-top: 2vh;
+    font-size: 2.5vw;
+    letter-spacing: 0.4vw;
+    opacity: 0.7;
 }
 </style>
 </head>
@@ -111,23 +95,25 @@ body {
 <body>
 
 <div class="scoreboard">
+
     <div class="team team1">
         <div class="team-name" id="team1-name">Team 1</div>
         <div class="score" id="team1-score">0</div>
     </div>
 
-    <div class="middle-section">
+    <div class="middle">
         <div class="divider">:</div>
-        <div class="sets-display">
+        <div class="sets">
             <span id="team1-sets">0</span> : <span id="team2-sets">0</span>
         </div>
-        <div class="sets-label">Sätze</div>
+        <div class="sets-label">SÄTZE</div>
     </div>
 
     <div class="team team2">
         <div class="team-name" id="team2-name">Team 2</div>
         <div class="score" id="team2-score">0</div>
     </div>
+
 </div>
 
 <script type="module">
